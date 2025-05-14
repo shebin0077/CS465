@@ -1,21 +1,24 @@
 const express = require('express');
 const path = require('path');
+const exphbs = require('express-handlebars');
+const indexRouter = require('./app_server/routes/index');
 
 const app = express();
 
-// Set up Handlebars view engine
-const exphbs = require('express-handlebars');
-app.engine('hbs', exphbs.engine({ extname: 'hbs' }));
+// Handlebars setup
+app.engine('hbs', exphbs.engine({
+  extname: 'hbs',
+  defaultLayout: 'main',
+  layoutsDir: path.join(__dirname, 'app_server/views/layouts')
+}));
 app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'app_server', 'views'));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
-app.get('/', (req, res) => {
-  res.render('index', { title: 'Travlr Getaways' });
-});
+// Use routes
+app.use('/', indexRouter);
 
 // Start server
 const PORT = process.env.PORT || 3000;
