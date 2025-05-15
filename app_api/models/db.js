@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const readLine = require('readline');
 
-const dbURI = "mongodb+srv://gopakumarcg57:z8PxZskrw2ffk5b5@cluster0.qvlcr3o.mongodb.net/travlr?retryWrites=true&w=majority&appName=Cluster0";
+const dbURI = "mongodb+srv://gopakumarcg57:z8PxZskrw2ffk5b5@cluster0.qvlcr3o.mongodb.net/travlr?retryWrites=true&w=majority&tls=true";
 
 // Connect to MongoDB Atlas
 const connect = () => {
     setTimeout(() => {
-        mongoose.connect(dbURI); // No need for useNewUrlParser or useUnifiedTopology
+        mongoose.connect(dbURI, {});
     }, 1000);
 };
 
