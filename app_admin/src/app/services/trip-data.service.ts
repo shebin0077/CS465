@@ -1,29 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthenticationService } from './authentication.service';
 import { Trip } from '../models/trip';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TripDataService {
+  private baseUrl = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient) { }
-  url = 'http://localhost:3000/api/trips';
+  constructor(private http: HttpClient, private authService: AuthenticationService) { }
 
-  getTrips(): Observable<Trip[]> {
 
-    return this.http.get<Trip[]>(this.url)
+  // Fetch all trips
+  getAllTrips(): Observable<Trip[]> {
+    return this.http.get<Trip[]>(`${this.baseUrl}/trips`);
   }
 
-  addTrip(FormData: Trip): Observable<Trip> {
-    return this.http.post<Trip>(this.url, FormData);
+  // Add a trip
+  addTrip(trip: any): Observable<any> {
+    const headers = this.authService.getAuthHeaders(); // Get Authorization headers
+    return this.http.post(`${this.baseUrl}/trips`, trip, { headers });
   }
 
-  getTrip(tripCode: string): Observable<Trip[]> {
-    return this.http.get<Trip[]>(`${this.url}/${tripCode}`);
+  // Fetch a trip by code
+  getTrip(code: string): Observable<any> {
+    const headers = this.authService.getAuthHeaders(); // Get Authorization headers
+    return this.http.get<Trip>(`${this.baseUrl}/trips/${code}`, { headers });
   }
-  updateTrip(FormData: Trip): Observable<Trip> {
-    return this.http.put<Trip>(`${this.url}/${FormData.code}`, FormData);
+
+  // Update a trip
+  updateTrip(code: string, trip: any): Observable<any> {
+    const headers = this.authService.getAuthHeaders(); // Get Authorization headers
+    return this.http.put(`${this.baseUrl}/trips/${code}`, trip, { headers });
   }
 }

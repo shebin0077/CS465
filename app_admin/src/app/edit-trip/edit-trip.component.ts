@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule }
-  from "@angular/forms";
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import { TripDataService } from '../services/trip-data.service';
 import { Trip } from '../models/trip';
 
@@ -17,6 +16,7 @@ import { Trip } from '../models/trip';
 
 export class EditTripComponent implements OnInit {
   public editForm!: FormGroup;
+  tripCode: string = '';
   trip!: Trip;
   submitted = false;
   message: string = '';
@@ -24,22 +24,23 @@ export class EditTripComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private tripDataService: TripDataService
   ) { }
 
   ngOnInit(): void {
     // Retrieve stashed trip ID
-    let tripCode = localStorage.getItem("tripCode");
-    if (!tripCode) {
+    this.tripCode = this.route.snapshot.paramMap.get('tripCode') || '';
+    if (!this.tripCode) {
       alert("Something wrong, couldn't find where I stashed tripCode!");
       this.router.navigate(['']);
       return;
     }
     console.log('EditTripComponent::ngOnInit');
-    console.log('tripcode:' + tripCode);
+    console.log('tripcode:' + this.tripCode);
     this.editForm = this.formBuilder.group({
       _id: [],
-      code: [tripCode, Validators.required],
+      code: [this.tripCode, Validators.required],
       name: ['', Validators.required],
       length: ['', Validators.required],
       start: ['', Validators.required],
@@ -48,7 +49,7 @@ export class EditTripComponent implements OnInit {
       image: ['', Validators.required],
       description: ['', Validators.required]
     })
-    this.tripDataService.getTrip(tripCode)
+    this.tripDataService.getTrip(this.tripCode)
       .subscribe({
         next: (value: any) => {
           this.trip = value;
@@ -58,7 +59,7 @@ export class EditTripComponent implements OnInit {
             this.message = 'No Trip Retrieved!';
           }
           else {
-            this.message = 'Trip: ' + tripCode + ' retrieved';
+            this.message = 'Trip: ' + this.tripCode + ' retrieved';
           }
           console.log(this.message);
         },
@@ -71,7 +72,7 @@ export class EditTripComponent implements OnInit {
   public onSubmit() {
     this.submitted = true;
     if (this.editForm.valid) {
-      this.tripDataService.updateTrip(this.editForm.value)
+      this.tripDataService.updateTrip(this.editForm.value.code, this.editForm.value)
         .subscribe({
           next: (value: any) => {
             console.log(value);

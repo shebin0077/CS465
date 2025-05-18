@@ -22,15 +22,17 @@ export class TriplistingComponent implements OnInit {
     private router: Router) {
     console.log('trip-listing constructor');
   }
-  public addTrip(): void {  
-    this.router.navigate(['/add-trip']);
+  public addTrip(): void {
+    this.router.navigate(['/add-trip']).then(() => {
+      // Refresh the trip list after navigating back
+      this.getStuff();
+    });
   }
 
-
   private getStuff(): void {
-    this.tripDataService.getTrips()
+    this.tripDataService.getAllTrips() // Replace 'defaultCode' with the actual code you want to use
       .subscribe({
-        next: (value: any) => {
+        next: (value: Trip[]) => {
           this.trips = value;
           if (value.length > 0) {
             this.message = 'There are ' + value.length + ' trips available.';

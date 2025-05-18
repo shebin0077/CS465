@@ -10,7 +10,10 @@
         <p class="card-text" [innerHTML]="trip.description">
         </p>
         <div>
-            <button class="btn btn-warning" (click)="editTrip(trip)">Edit Trip</button>
+            <!-- <button class="btn btn-warning" (click)="editTrip(trip)">Edit Trip</button> -->
+            <!-- <button *ngIf="isLoggedIn()" class="btn btn-primary">Edit Trip</button> -->
+            <button *ngIf="isLoggedIn()" class="btn btn-warning" [routerLink]="['/edit-trip', trip.code]">Edit
+                Trip</button>
         </div>
     </div>
 </div>
